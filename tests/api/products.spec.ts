@@ -1,8 +1,7 @@
-
 import { test, expect } from '@playwright/test';
 import { ProductService } from '../../services/ProductService';
 
-test.describe('FakeStoreAPI - Product Tests', () => {
+test.describe('DummyJSON API - Product Tests', () => {
 
   let productService: ProductService;
 
@@ -15,12 +14,13 @@ test.describe('FakeStoreAPI - Product Tests', () => {
 
     expect(response.status()).toBe(200);
 
-    const products = await response.json();
+    const body = await response.json();
 
-    expect(Array.isArray(products)).toBeTruthy();
-    expect(products.length).toBeGreaterThan(0);
+    expect(Array.isArray(body.products)).toBeTruthy();
+    expect(body.products.length).toBeGreaterThan(0);
+    expect(body.total).toBeGreaterThan(0);
 
-    console.log('Total products:', products.length);
+    console.log('Products returned:', body.products.length);
   });
 
   test('TC_API_002 - Get a product by ID', async () => {

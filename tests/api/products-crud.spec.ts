@@ -1,8 +1,7 @@
-
 import { test, expect } from '@playwright/test';
 import { ProductService } from '../../services/ProductService';
 
-test.describe('FakeStoreAPI - Product CRUD Tests', () => {
+test.describe('DummyJSON API - Product CRUD Tests', () => {
 
   let productService: ProductService;
 
@@ -14,7 +13,6 @@ test.describe('FakeStoreAPI - Product CRUD Tests', () => {
     title: 'QA Automation Test Product',
     price: 49.99,
     description: 'Product created through Playwright API automation',
-    image: 'https://i.pravatar.cc',
     category: 'electronics'
   };
 
@@ -36,7 +34,6 @@ test.describe('FakeStoreAPI - Product CRUD Tests', () => {
       title: 'Updated QA Automation Product',
       price: 79.99,
       description: 'Product updated through Playwright API automation',
-      image: 'https://i.pravatar.cc',
       category: 'electronics'
     };
 
@@ -76,8 +73,8 @@ test.describe('FakeStoreAPI - Product CRUD Tests', () => {
     const deletedProduct = await response.json();
 
     expect(deletedProduct.id).toBe(1);
-
-    console.log('Delete response:', deletedProduct);
+    expect(deletedProduct.isDeleted).toBe(true);
+    expect(deletedProduct.deletedOn).toBeTruthy();
   });
 
 });
