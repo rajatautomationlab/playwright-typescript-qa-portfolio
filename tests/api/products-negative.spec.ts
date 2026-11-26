@@ -1,8 +1,7 @@
-
 import { test, expect } from '@playwright/test';
 import { ProductService } from '../../services/ProductService';
 
-test.describe('FakeStoreAPI - Negative and Response Validation Tests', () => {
+test.describe('DummyJSON API - Negative and Response Validation Tests', () => {
 
   let productService: ProductService;
 
@@ -13,13 +12,11 @@ test.describe('FakeStoreAPI - Negative and Response Validation Tests', () => {
   test('TC_API_007 - Verify response for a non-existing product ID', async () => {
     const response = await productService.getProductById(9999);
 
-    expect(response.status()).toBe(200);
+    expect(response.status()).toBe(404);
 
-    const responseBody = await response.text();
+    const body = await response.json();
 
-    expect(responseBody.trim()).toBe('');
-
-    console.log('Non-existing product response body:', responseBody);
+    expect(body.message).toContain('not found');
   });
 
   test('TC_API_008 - Validate mandatory fields in product response', async () => {
@@ -27,7 +24,7 @@ test.describe('FakeStoreAPI - Negative and Response Validation Tests', () => {
 
     expect(response.status()).toBe(200);
 
-    const products = await response.json();
+    const { products } = await response.json();
 
     expect(Array.isArray(products)).toBeTruthy();
     expect(products.length).toBeGreaterThan(0);
@@ -38,7 +35,7 @@ test.describe('FakeStoreAPI - Negative and Response Validation Tests', () => {
       expect(product).toHaveProperty('price');
       expect(product).toHaveProperty('description');
       expect(product).toHaveProperty('category');
-      expect(product).toHaveProperty('image');
+      expect(product).toHaveProperty('thumbnail');
       expect(product).toHaveProperty('rating');
 
       expect(typeof product.id).toBe('number');

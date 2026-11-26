@@ -18,7 +18,7 @@ export class ProductService {
   }
 
   async createProduct(productData: object): Promise<APIResponse> {
-    return await this.request.post(`${this.baseUrl}/products`, {
+    return await this.request.post(`${this.baseUrl}/products/add`, {
       data: productData
     });
   }
