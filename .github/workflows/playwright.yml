@@ -37,7 +37,12 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright tests
+      - name: Run smoke tests (pull requests)
+        if: github.event_name == 'pull_request'
+        run: npx playwright test --grep @smoke
+
+      - name: Run full regression suite (main, nightly, manual)
+        if: github.event_name != 'pull_request'
         run: npx playwright test
 
       - name: Upload HTML report
