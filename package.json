@@ -10,7 +10,10 @@
     "test:regression": "playwright test --grep @regression",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "docker:build": "docker compose build",
+    "docker:test": "docker compose run --rm playwright",
+    "docker:smoke": "docker compose run --rm playwright npx playwright test --grep @smoke"
   },
   "keywords": [
     "playwright",

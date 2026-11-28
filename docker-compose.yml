@@ -1,0 +1,11 @@
+services:
+  playwright:
+    build: .
+    init: true
+    ipc: host
+    environment:
+      UI_BASE_URL: ${UI_BASE_URL:-https://www.saucedemo.com}
+      API_BASE_URL: ${API_BASE_URL:-https://dummyjson.com}
+    volumes:
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
