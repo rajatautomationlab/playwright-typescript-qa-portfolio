@@ -1,19 +1,15 @@
+import { test, expect } from '../../fixtures/test-fixtures';
+import { users } from '../../test-data/users';
 
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/LoginPage';
+test.describe('SauceDemo Login Tests', { tag: ['@ui', '@regression'] }, () => {
 
-test.describe('SauceDemo Login Tests', () => {
-
-  let loginPage: LoginPage;
-
-  test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page);
+  test.beforeEach(async ({ loginPage }) => {
     await loginPage.navigate();
   });
 
-  test('TC_UI_001 - Login with valid credentials', async ({ page }) => {
+  test('TC_UI_001 - Login with valid credentials', { tag: '@smoke' }, async ({ page, loginPage }) => {
 
-    await loginPage.login('standard_user', 'secret_sauce');
+    await loginPage.login(users.standard.username, users.standard.password);
 
     await expect(page).toHaveURL(/inventory.html/);
 
@@ -23,14 +19,24 @@ test.describe('SauceDemo Login Tests', () => {
 
   });
 
-  test('TC_UI_002 - Login with invalid credentials', async () => {
+  test('TC_UI_002 - Login with invalid credentials', async ({ loginPage }) => {
 
-    await loginPage.login('invalid_user', 'wrong_password');
+    await loginPage.login(users.invalid.username, users.invalid.password);
 
     await expect(loginPage.errorMessage).toBeVisible();
 
     await expect(loginPage.errorMessage).toContainText(
       'Username and password do not match'
+    );
+
+  });
+
+  test('TC_UI_009 - Login with locked out user', async ({ loginPage }) => {
+
+    await loginPage.login(users.locked.username, users.locked.password);
+
+    await expect(loginPage.errorMessage).toContainText(
+      'this user has been locked out'
     );
 
   });
