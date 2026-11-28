@@ -1,4 +1,6 @@
 import { test, expect } from '../../fixtures/test-fixtures';
+import { productListSchema, errorSchema } from '../../schemas/product.schema';
+import { expectValidSchema } from '../../utils/schema';
 
 test.describe('DummyJSON API - Negative and Response Validation Tests', { tag: ['@api', '@regression'] }, () => {
 
@@ -7,36 +9,18 @@ test.describe('DummyJSON API - Negative and Response Validation Tests', { tag: [
 
     expect(response.status()).toBe(404);
 
-    const body = await response.json();
+    const body = expectValidSchema(errorSchema, await response.json());
 
     expect(body.message).toContain('not found');
   });
 
-  test('TC_API_008 - Validate mandatory fields in product response', async ({ productService }) => {
+  test('TC_API_008 - Validate every product matches the schema', async ({ productService }) => {
     const response = await productService.getAllProducts();
 
     expect(response.status()).toBe(200);
 
-    const { products } = await response.json();
-
-    expect(Array.isArray(products)).toBeTruthy();
-    expect(products.length).toBeGreaterThan(0);
-
-    for (const product of products) {
-      expect(product).toHaveProperty('id');
-      expect(product).toHaveProperty('title');
-      expect(product).toHaveProperty('price');
-      expect(product).toHaveProperty('description');
-      expect(product).toHaveProperty('category');
-      expect(product).toHaveProperty('thumbnail');
-      expect(product).toHaveProperty('rating');
-
-      expect(typeof product.id).toBe('number');
-      expect(typeof product.title).toBe('string');
-      expect(typeof product.price).toBe('number');
-      expect(product.price).toBeGreaterThan(0);
-      expect(typeof product.category).toBe('string');
-    }
+    // The schema validates every product in the list, so one bad record fails the test
+    expectValidSchema(productListSchema, await response.json());
   });
 
 });
