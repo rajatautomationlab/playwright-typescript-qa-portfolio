@@ -2,7 +2,7 @@
 
 [![Playwright Tests](https://github.com/rajatautomationlab/playwright-typescript-qa-portfolio/actions/workflows/playwright.yml/badge.svg)](https://github.com/rajatautomationlab/playwright-typescript-qa-portfolio/actions/workflows/playwright.yml)
 
-End-to-end UI and API test automation framework built with Playwright and TypeScript. It uses the Page Object Model, custom fixtures, external test data, a service layer for API testing, and Zod schema validation for API contracts. CI runs smoke tests on pull requests and the full regression suite on merges, nightly, and on demand.
+End-to-end UI and API test automation framework built with Playwright and TypeScript. It uses the Page Object Model, custom fixtures, external test data, a service layer for API testing, and Zod schema validation for API contracts. Tests can run locally or in Docker. CI runs smoke tests on pull requests and the full regression suite on merges, nightly, and on demand.
 
 ## Applications Under Test
 
@@ -21,6 +21,7 @@ The API suite was migrated from FakeStoreAPI to DummyJSON after FakeStoreAPI beg
 - Zod schema validation for API responses
 - Test tagging (`@smoke`, `@regression`, `@ui`, `@api`)
 - Environment-based configuration with dotenv
+- Docker and Docker Compose (official Playwright image)
 - GitHub Actions CI with scheduled runs and HTML report artifact
 
 ## Project Structure
@@ -38,6 +39,9 @@ The API suite was migrated from FakeStoreAPI to DummyJSON after FakeStoreAPI beg
 │   ├── api/             API tests
 │   └── ui/              UI tests
 ├── utils/               Shared helpers
+├── .dockerignore
+├── Dockerfile
+├── docker-compose.yml
 ├── playwright.config.ts
 └── package.json
 ```
@@ -75,6 +79,18 @@ npm run test:debug      # Playwright inspector
 npm run report          # open the HTML report
 ```
 
+## Running in Docker
+
+The suite runs in the official Playwright image, pinned to the same version as `@playwright/test`, so results match CI and other machines.
+
+```bash
+npm run docker:build   # build the image
+npm run docker:test    # full suite in a container
+npm run docker:smoke   # smoke tests only
+```
+
+The HTML report and failure traces are written back to `playwright-report/` and `test-results/` on the host. When upgrading Playwright, update the image tag in `Dockerfile` to the same version.
+
 ## Configuration
 
 Base URLs come from environment variables, with defaults in `config/env.ts`:
@@ -89,9 +105,9 @@ Base URLs come from environment variables, with defaults in `config/env.ts`:
 | Trigger | What runs |
 |---|---|
 | Pull request to `main` | Smoke tests (`@smoke`) |
-| Push to `main` | Full suite |
-| Nightly schedule (02:30 UTC) | Full suite |
-| Manual (`workflow_dispatch`) | Full suite |
+| Push to `main` | Full suite, plus the full suite inside Docker |
+| Nightly schedule (02:30 UTC) | Full suite, plus the full suite inside Docker |
+| Manual (`workflow_dispatch`) | Full suite, plus the full suite inside Docker |
 
 The pipeline uploads the Playwright HTML report as an artifact (retained for 30 days). On CI, failed tests retry twice, and traces, screenshots and videos are kept on failure. The workflow uses least-privilege permissions and cancels superseded runs.
 
