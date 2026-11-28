@@ -1,15 +1,8 @@
-import { test, expect } from '@playwright/test';
-import { ProductService } from '../../services/ProductService';
+import { test, expect } from '../../fixtures/test-fixtures';
 
-test.describe('DummyJSON API - Negative and Response Validation Tests', () => {
+test.describe('DummyJSON API - Negative and Response Validation Tests', { tag: ['@api', '@regression'] }, () => {
 
-  let productService: ProductService;
-
-  test.beforeEach(async ({ request }) => {
-    productService = new ProductService(request);
-  });
-
-  test('TC_API_007 - Verify response for a non-existing product ID', async () => {
+  test('TC_API_007 - Verify response for a non-existing product ID', async ({ productService }) => {
     const response = await productService.getProductById(9999);
 
     expect(response.status()).toBe(404);
@@ -19,7 +12,7 @@ test.describe('DummyJSON API - Negative and Response Validation Tests', () => {
     expect(body.message).toContain('not found');
   });
 
-  test('TC_API_008 - Validate mandatory fields in product response', async () => {
+  test('TC_API_008 - Validate mandatory fields in product response', async ({ productService }) => {
     const response = await productService.getAllProducts();
 
     expect(response.status()).toBe(200);

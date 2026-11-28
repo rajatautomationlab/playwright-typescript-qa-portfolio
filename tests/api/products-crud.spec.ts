@@ -1,22 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { ProductService } from '../../services/ProductService';
+import { test, expect } from '../../fixtures/test-fixtures';
+import { newProduct, fullUpdate, partialUpdate } from '../../test-data/products';
 
-test.describe('DummyJSON API - Product CRUD Tests', () => {
+test.describe('DummyJSON API - Product CRUD Tests', { tag: ['@api', '@regression'] }, () => {
 
-  let productService: ProductService;
-
-  test.beforeEach(async ({ request }) => {
-    productService = new ProductService(request);
-  });
-
-  const newProduct = {
-    title: 'QA Automation Test Product',
-    price: 49.99,
-    description: 'Product created through Playwright API automation',
-    category: 'electronics'
-  };
-
-  test('TC_API_003 - Create a product using POST', async () => {
+  test('TC_API_003 - Create a product using POST', async ({ productService }) => {
     const response = await productService.createProduct(newProduct);
 
     expect(response.status()).toBe(201);
@@ -29,43 +16,31 @@ test.describe('DummyJSON API - Product CRUD Tests', () => {
     expect(product.category).toBe(newProduct.category);
   });
 
-  test('TC_API_004 - Update a product using PUT', async () => {
-    const updatedProduct = {
-      title: 'Updated QA Automation Product',
-      price: 79.99,
-      description: 'Product updated through Playwright API automation',
-      category: 'electronics'
-    };
-
-    const response = await productService.updateProduct(1, updatedProduct);
+  test('TC_API_004 - Update a product using PUT', async ({ productService }) => {
+    const response = await productService.updateProduct(1, fullUpdate);
 
     expect(response.status()).toBe(200);
 
     const product = await response.json();
 
     expect(product.id).toBe(1);
-    expect(product.title).toBe(updatedProduct.title);
-    expect(product.price).toBe(updatedProduct.price);
+    expect(product.title).toBe(fullUpdate.title);
+    expect(product.price).toBe(fullUpdate.price);
   });
 
-  test('TC_API_005 - Partially update a product using PATCH', async () => {
-    const updatedData = {
-      title: 'Partially Updated Product',
-      price: 99.99
-    };
-
-    const response = await productService.partiallyUpdateProduct(1, updatedData);
+  test('TC_API_005 - Partially update a product using PATCH', async ({ productService }) => {
+    const response = await productService.partiallyUpdateProduct(1, partialUpdate);
 
     expect(response.status()).toBe(200);
 
     const product = await response.json();
 
     expect(product.id).toBe(1);
-    expect(product.title).toBe(updatedData.title);
-    expect(product.price).toBe(updatedData.price);
+    expect(product.title).toBe(partialUpdate.title);
+    expect(product.price).toBe(partialUpdate.price);
   });
 
-  test('TC_API_006 - Delete a product using DELETE', async () => {
+  test('TC_API_006 - Delete a product using DELETE', async ({ productService }) => {
     const response = await productService.deleteProduct(1);
 
     expect(response.status()).toBe(200);

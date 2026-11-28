@@ -1,26 +1,8 @@
+import { test, expect } from '../../fixtures/test-fixtures';
 
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/LoginPage';
-import { InventoryPage } from '../../pages/InventoryPage';
+test.describe('SauceDemo Product and Cart Tests', { tag: ['@ui', '@regression'] }, () => {
 
-test.describe('SauceDemo Product and Cart Tests', () => {
-
-  let loginPage: LoginPage;
-  let inventoryPage: InventoryPage;
-
-  test.beforeEach(async ({ page }) => {
-
-    loginPage = new LoginPage(page);
-    inventoryPage = new InventoryPage(page);
-
-    await loginPage.navigate();
-
-    await loginPage.login('standard_user', 'secret_sauce');
-
-    await expect(page).toHaveURL(/inventory.html/);
-  });
-
-  test('TC_UI_003 - Verify product catalogue', async ({ page }) => {
+  test('TC_UI_003 - Verify product catalogue', async ({ page, loggedInInventoryPage: inventoryPage }) => {
 
     await expect(inventoryPage.productItems).toHaveCount(6);
 
@@ -30,7 +12,7 @@ test.describe('SauceDemo Product and Cart Tests', () => {
 
   });
 
-  test('TC_UI_004 - Verify product sorting by price low to high', async () => {
+  test('TC_UI_004 - Verify product sorting by price low to high', async ({ loggedInInventoryPage: inventoryPage }) => {
 
     await inventoryPage.sortByPriceLowToHigh();
 
@@ -39,7 +21,7 @@ test.describe('SauceDemo Product and Cart Tests', () => {
 
   });
 
-  test('TC_UI_005 - Add product to shopping cart', async ({ page }) => {
+  test('TC_UI_005 - Add product to shopping cart', { tag: '@smoke' }, async ({ page, loggedInInventoryPage: inventoryPage }) => {
 
     await inventoryPage.addBackpackToCart();
 

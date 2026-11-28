@@ -1,4 +1,3 @@
-
 {
   "compilerOptions": {
     "target": "ES2022",
@@ -16,6 +15,8 @@
     "services/**/*.ts",
     "config/**/*.ts",
     "utils/**/*.ts",
+    "fixtures/**/*.ts",
+    "test-data/**/*.ts",
     "playwright.config.ts"
   ]
 }

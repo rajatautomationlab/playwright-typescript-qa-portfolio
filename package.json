@@ -6,6 +6,8 @@
     "test": "playwright test",
     "test:ui": "playwright test tests/ui",
     "test:api": "playwright test tests/api",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "report": "playwright show-report"
@@ -17,7 +19,7 @@
     "api-testing",
     "e2e-testing"
   ],
-  "author": "",
+  "author": "Rajat Patil",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
